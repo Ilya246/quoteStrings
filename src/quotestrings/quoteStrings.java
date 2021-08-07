@@ -6,6 +6,9 @@ import mindustry.content.*;
 import mindustry.mod.*;
 import mindustry.mod.Mod.*;
 import mindustry.gen.*;
+import mindustry.world.Block;
+import mindustry.world.blocks.*;
+import mindustry.world.blocks.ConstructBlock.*;
 import arc.Core.*;
 import arc.util.*;
 import arc.util.Log;
@@ -39,6 +42,7 @@ public class quoteStrings extends Mod{
 
     @Override
     public void init(){
+        Timer.schedule(() -> {chance = 0.5f;}, 1f);
         final ObjectMap<String, String> map = arc.Core.bundle.getProperties();
         arc.Core.bundle.setProperties(new ObjectMap<String, String>(){
             {
@@ -61,19 +65,38 @@ public class quoteStrings extends Mod{
                 float[] amplify = new float[]{1f};
                 b.proximity.each(pblock -> {
                     if(pblock.block == Blocks.router){
-                        amplify[0] *= 4f;
+                        amplify[0] += 2f;
                     };
                 });
                 Player p = e.unit.getPlayer();
                 if(p != null && p != player){
                     amplify[0] *= 0.1f;
                 };
-                amplify[0] *= e.breaking ? -1 : 1;
-                chance = Mathf.clamp(chance + amplify[0] / 400f, 0.02f, 1f);
+                chance = Mathf.clamp(chance + amplify[0] / 200f, 0.02f, 1f);
             };
         });
+
+        arc.Events.on(BlockBuildBeginEvent.class, e -> {
+            Building build = e.tile.build;
+            if(e.breaking && build instanceof ConstructBuild){
+                ConstructBuild cbuild = (ConstructBuild)build;
+                Block block = cbuild.current;
+                try{
+                    float amplify = 1;
+                    Player p = e.unit.getPlayer();
+                    if(p != null && p != player){
+                        amplify *= 0.1f;
+                    };
+                    if(block == Blocks.router){
+                        chance = Mathf.clamp(chance - 0.008f * amplify, 0.02f, 1f);
+                    };
+                }catch(Exception badBuildConversion){
+                };
+            };
+        });
+
         arc.Events.run(Trigger.update, () -> {
-            chance = Mathf.clamp(chance + Mathf.random(-0.00005f, 0.00005f), 0.02f, 1f);
+            chance = Mathf.clamp(chance + Mathf.random(-0.00008f, 0.00008f), 0.02f, 1f);
         });
     }
 }
