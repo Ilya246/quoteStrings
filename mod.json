@@ -3,7 +3,7 @@
   "author": "[USMP]Ilya246",
   "main": "quotestrings.quoteStrings",
   "description": "Try building and deconstructing routerchains.",
-  "minGameVersion": 105,
-  "version": 1.0,
+  "minGameVersion": 129,
+  "version": 1.2,
   "hidden": true
 }
