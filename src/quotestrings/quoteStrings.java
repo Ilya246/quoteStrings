@@ -8,6 +8,7 @@ import mindustry.mod.Mod.*;
 import mindustry.gen.*;
 import mindustry.world.Block;
 import mindustry.world.blocks.*;
+import mindustry.world.blocks.distribution.*;
 import mindustry.world.blocks.ConstructBlock.*;
 import arc.Core.*;
 import arc.util.*;
@@ -40,6 +41,10 @@ public class quoteStrings extends Mod{
         return result.toString();
     }
 
+    public static boolean isRouter(Block block){
+        return block instanceof Router && block.size == 1;
+    }
+
     @Override
     public void init(){
         Timer.schedule(() -> {chance = 0.5f;}, 1f);
@@ -59,9 +64,10 @@ public class quoteStrings extends Mod{
                 return (String)super.get(key);
             }
         });
+
         arc.Events.on(BlockBuildEndEvent.class, e -> {
             Building b = e.tile.build;
-            if(b != null && b.block == Blocks.router){
+            if(b != null && !e.breaking && isRouter(b.block)){
                 float[] amplify = new float[]{1f};
                 b.proximity.each(pblock -> {
                     if(pblock.block == Blocks.router){
@@ -87,7 +93,7 @@ public class quoteStrings extends Mod{
                     if(p != null && p != player){
                         amplify *= 0.1f;
                     };
-                    if(block == Blocks.router){
+                    if(isRouter(block)){
                         chance = Mathf.clamp(chance - 0.008f * amplify, 0.02f, 1f);
                     };
                 }catch(Exception badBuildConversion){
