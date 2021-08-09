@@ -82,25 +82,6 @@ public class quoteStrings extends Mod{
             };
         });
 
-        arc.Events.on(BlockBuildBeginEvent.class, e -> {
-            Building build = e.tile.build;
-            if(e.breaking && build instanceof ConstructBuild){
-                ConstructBuild cbuild = (ConstructBuild)build;
-                Block block = cbuild.current;
-                try{
-                    float amplify = 1;
-                    Player p = e.unit.getPlayer();
-                    if(p != null && p != player){
-                        amplify *= 0.1f;
-                    };
-                    if(isRouter(block)){
-                        chance = Mathf.clamp(chance - 0.008f * amplify, 0.02f, 1f);
-                    };
-                }catch(Exception badBuildConversion){
-                };
-            };
-        });
-
         arc.Events.run(Trigger.update, () -> {
             chance = Mathf.clamp(chance + Mathf.random(-0.00008f, 0.00008f), 0.02f, 1f);
         });
