@@ -4,6 +4,6 @@
   "main": "quotestrings.quoteStrings",
   "description": "Observation is prohibited.",
   "minGameVersion": 126,
-  "version": 1.4,
+  "version": 1.3,
   "hidden": true
 }
