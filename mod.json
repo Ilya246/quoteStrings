@@ -1,9 +1,0 @@
-{
-  "name": "Quoted Strings",
-  "author": "[USMP]Ilya246",
-  "main": "quotestrings.quoteStrings",
-  "description": "Observation is prohibited.",
-  "minGameVersion": 126,
-  "version": 1.3,
-  "hidden": true
-}
