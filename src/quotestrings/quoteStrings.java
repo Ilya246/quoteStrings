@@ -21,10 +21,22 @@ import static mindustry.Vars.*;
 
 public class quoteStrings extends Mod{
 
-    public float chance = 0.5f;
+    // changing variables
+    public float chance = 0.3f;
+    public float deltaTimeMult = 1f;
+
+    // usually unchanging variables
     public FxProcessor fx;
     public float clampFloor = 0.02f;
     public float clampCeil = 5f;
+    public float amplifyMult = 0.005f;
+    public float routerchainAmp = 2f;
+
+    // shader variables
+    public float saturContrastThres = 0.6f;
+    public float saturContrastMult = 1.5f;
+    public float chromAbbThres = 0.8f;
+    public float chromAbbMult = 1.5f;
 
     public static String quote(int length){
         String[] quotes = new String[]{"you cannot kill me in a way that matters.", "just think, every step taken is another soul left behind", "everything burns every single day until it's reduced to dust", "this doesn't end well", "you think you're safe?", "one cannot create beauty without destruction", "every single moment has consequence", "you wouldn't want anyone to know what you're hiding.", "where are you right now? what do you fear?", "it doesn't make sense to save now.", "it's too late.", "where is it.", "there is no threat", "it's always been there", "never make another wish ever again.", "where are you right now?", "why? it will never end now.", "do not.", "they are not your enemy", "this is your fault.", "we are not dead yet.", "it's finally happening", "please verify your humanity", "no one will matter", "this is not a matter of caring.", "are you okay with what you just did?", "stop reading this.", "watch your head.", "if you see this", "do not look at it", "observation is prohibited.", "your mind is nonexistent"};
@@ -75,37 +87,43 @@ public class quoteStrings extends Mod{
         Events.on(BlockBuildEndEvent.class, e -> {
             Building b = e.tile.build;
             if(b != null && isRouter(b)){
-                float amplify = e.breaking ? -2f : 1f;
+                float amplify = e.breaking ? -1f : 1f;
                 for(Building pblock : b.proximity){
                     if(isRouter(pblock)){
-                        amplify *= 2f;
+                        amplify *= routerchainAmp;
                     };
                 };
                 Player p = e.unit.getPlayer();
                 if(p != null && p != player){
                     amplify = 0f;
                 };
-                chance += amplify / 400f;
+                chance += amplify * amplifyMult;
             };
         });
 
         Events.run(Trigger.update, () -> {
             chance = Mathf.clamp(chance + Mathf.random(-0.00008f, 0.00008f), clampFloor, clampCeil);
+            if(chance > 2f && !net.client()){
+                float deltaChange = (chance - 2f) * (chance - 2f) / 200f;
+                deltaTimeMult = Mathf.lerp(0, deltaTimeMult * 2, Mathf.random(0.5f - deltaChange, 0.5f + deltaChange));
+            };
+            deltaTimeMult = Mathf.lerp(deltaTimeMult, 1f, Math.min(0.01f / chance, 1f));
         });
+        Time.setDeltaProvider(() -> Math.min(Core.graphics.getDeltaTime() * 60f * deltaTimeMult, 3f));
 
         fx.addEffect(new LevelsFilter(){
             @Override
             public void update() {
-                this.saturation = 1.0f + Math.max((chance - 0.6f) * 1.5f, 0f);
-                this.contrast = 1.0f + Math.max((chance - 0.6f) * 1.5f, 0f);
+                this.saturation = 1.0f + Math.max((chance - saturContrastThres) * saturContrastMult, 0f);
+                this.contrast = 1.0f + Math.max((chance - saturContrastThres) * saturContrastMult, 0f);
                 this.rebind();
             }
         });
         fx.addEffect(new ChromaticAberrationFilter(4){
             @Override
             public void update() {
-                this.maxDistortion = Math.max((chance - 0.8f) * 1.5f, 0.0f);
-                boolean bl = this.disabled = chance < 0.8f;
+                this.maxDistortion = Math.max((chance - chromAbbThres) * chromAbbMult, 0.0f);
+                boolean bl = this.disabled = chance < chromAbbThres;
                 if(!this.disabled){
                     this.rebind();
                 }
@@ -117,11 +135,11 @@ public class quoteStrings extends Mod{
             fx.begin();
         });
         Events.run(Trigger.uiDrawBegin, () -> {
-	           if(state.isMenu()){
-                  fx.resize(Core.graphics.getWidth(), Core.graphics.getHeight());
-                  fx.clear(Color.black);
-                  fx.begin();
-	           };
+            if(state.isMenu()){
+                fx.resize(Core.graphics.getWidth(), Core.graphics.getHeight());
+                fx.clear(Color.black);
+                fx.begin();
+            };
         });
         Events.run(Trigger.uiDrawEnd, () -> {
             fx.end();
