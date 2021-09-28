@@ -107,6 +107,7 @@ public class quoteStrings extends Mod{
                 float deltaChange = (chance - 2f) * (chance - 2f) / 200f;
                 deltaTimeMult = Mathf.lerp(0f, deltaTimeMult * 2f + 0.5f, Mathf.random(0.5f - deltaChange, 0.5f + deltaChange));
             };
+            clampCeil = Math.max(5f, clampCeil + (chance - 4f) * 0.0006f);
             deltaTimeMult = Mathf.lerp(deltaTimeMult, 1f, Math.min(0.01f / chance, 1f));
         });
         Time.setDeltaProvider(() -> Math.min(Core.graphics.getDeltaTime() * 60f * deltaTimeMult, 3f));
