@@ -105,7 +105,7 @@ public class quoteStrings extends Mod{
             chance = Mathf.clamp(chance + Mathf.random(-0.00008f, 0.00008f), clampFloor, clampCeil);
             if(chance > 2f && !net.client()){
                 float deltaChange = (chance - 2f) * (chance - 2f) / 200f;
-                deltaTimeMult = Mathf.lerp(0, deltaTimeMult * 2, Mathf.random(0.5f - deltaChange, 0.5f + deltaChange));
+                deltaTimeMult = Mathf.lerp(0f, deltaTimeMult * 2f + 0.5f, Mathf.random(0.5f - deltaChange, 0.5f + deltaChange));
             };
             deltaTimeMult = Mathf.lerp(deltaTimeMult, 1f, Math.min(0.01f / chance, 1f));
         });
