@@ -1,5 +1,6 @@
 package quotestrings;
 
+import mindustry.content.Blocks;
 import mindustry.game.EventType.*;
 import mindustry.mod.Mod;
 import mindustry.gen.*;
@@ -103,6 +104,7 @@ public class quoteStrings extends Mod{
 
         Events.run(Trigger.update, () -> {
             chance = Mathf.clamp(chance + Mathf.random(-0.00008f, 0.00008f), clampFloor, clampCeil);
+            Blocks.router.details = String.valueOf(chance);
             if(chance > 2f && !net.client()){
                 float deltaChange = (chance - 2f) * (chance - 2f) / 200f;
                 deltaTimeMult = Mathf.lerp(0f, deltaTimeMult * 2f + 0.5f, Mathf.random(0.5f - deltaChange, 0.5f + deltaChange));
