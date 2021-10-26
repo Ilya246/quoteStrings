@@ -2,8 +2,6 @@ apply plugin: "java"
 
 version '1.0'
 
-sourceCompatibility = 1.8
-
 sourceSets.main.java.srcDirs = ["src"]
 
 repositories{
@@ -12,17 +10,19 @@ repositories{
 }
 
 dependencies{
-    def version = "v131"
+    def version = "v133"
     compileOnly "com.github.Anuken.Arc:arc-core:$version"
     compileOnly "com.github.Anuken.Mindustry:core:$version"
 }
 
-allprojects{
-    tasks.withType(JavaCompile){
-        if(JavaVersion.current() != JavaVersion.VERSION_1_8){
-            options.compilerArgs.addAll(['--release', '8'])
-        }
-    }
+compileJava{
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+    options.encoding = "UTF-8"
+}
+
+compileTestJava{
+    options.encoding = "UTF-8"
 }
 
 jar{
@@ -33,6 +33,6 @@ jar{
     }
 
     from(rootDir){
-        include "mod.hjson"
+        include "mod.json"
     }
 }
