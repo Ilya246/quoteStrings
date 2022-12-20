@@ -1,0 +1,10 @@
+{
+    "name": "quoteStrings",
+    "displayName": "Quoted Strings",
+    "author": "[USMP]Ilya246",
+    "description": "[#FF]Observation is prohibited.",
+    "main": "quoteStringsMod.quoteStringsMod",
+    "version": "1.6",
+    "hidden": "true",
+    "minGameVersion": "140"
+}
